@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Song Name — Artist Name</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Basic link preview (title/description/image) -->
+<meta property="og:title" content="Song Name — Artist Name">
+<meta property="og:description" content="Listen now">
+<meta property="og:image" content="https://YOUR-USERNAME.github.io/YOUR-REPO/album.jpg">
+<meta property="og:type" content="website">
+
+<!-- This is the part that makes Discord show a playable widget -->
+<meta name="twitter:card" content="player">
+<meta name="twitter:player" content="https://YOUR-USERNAME.github.io/YOUR-REPO/player.html">
+<meta name="twitter:player:width" content="480">
+<meta name="twitter:player:height" content="140">
+<meta name="twitter:image" content="https://YOUR-USERNAME.github.io/YOUR-REPO/album.jpg">
+
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #0B0B0F;
+    overflow: hidden;
+  }
+  .stage {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .art {
+    max-width: min(90vw, 90vh);
+    max-height: min(90vw, 90vh);
+    width: 520px;
+    height: 520px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 40px 90px -20px rgba(0,0,0,0.7);
+    display: block;
+  }
+  .play-btn {
+    position: absolute;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.3s ease;
+  }
+  .play-btn:hover { transform: scale(1.08); }
+  .play-btn:active { transform: scale(0.94); }
+  .play-btn.hidden { opacity: 0; pointer-events: none; }
+  .play-btn svg { width: 28px; height: 28px; margin-left: 4px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <img class="art" src="album.jpg" alt="Album art">
+    <button class="play-btn" id="playBtn" aria-label="Play song">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+    </button>
+  </div>
+
+  <audio id="audio" src="song.mp3" preload="auto" loop></audio>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('playBtn');
+
+    playBtn.addEventListener('click', () => {
+      audio.play();
+      playBtn.classList.add('hidden');
+    });
+
+    // If the song ends and looping is off, bring the button back
+    audio.addEventListener('pause', () => {
+      if (!audio.ended) return;
+      playBtn.classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
