@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>den lilla bäcken</title>
+<title>Song Name — Artist Name</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Basic link preview (title/description/image) -->
 <meta property="og:title" content="Song Name — Artist Name">
 <meta property="og:description" content="Listen now">
-<meta property="og:image" content="https://YOUR-USERNAME.github.io/YOUR-REPO/album.jpg">
+<meta property="og:image" content="https://vonfabbe.github.io/vonfabbe/album.jpg">
 <meta property="og:type" content="website">
 
 <!-- This is the part that makes Discord show a playable widget -->
 <meta name="twitter:card" content="player">
-<meta name="twitter:player" content="https://YOUR-USERNAME.github.io/YOUR-REPO/player.html">
+<meta name="twitter:player" content="https://vonfabbe.github.io/vonfabbe/player.html">
 <meta name="twitter:player:width" content="480">
 <meta name="twitter:player:height" content="140">
-<meta name="twitter:image" content="https://YOUR-USERNAME.github.io/YOUR-REPO/album.jpg">
+<meta name="twitter:image" content="https://vonfabbe.github.io/vonfabbe/album.jpg">
 
 <style>
   html, body {
@@ -33,6 +33,26 @@
     justify-content: center;
     position: relative;
   }
+
+  /* Entry screen */
+  .enter-btn {
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 999px;
+    padding: 16px 36px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease, opacity 0.4s ease;
+  }
+  .enter-btn:hover { background: rgba(255,255,255,0.08); }
+  .enter-btn:active { transform: scale(0.97); }
+  .enter-btn.hidden { opacity: 0; pointer-events: none; }
+
+  /* Album art */
   .art {
     max-width: min(90vw, 90vh);
     max-height: min(90vw, 90vh);
@@ -42,51 +62,35 @@
     border-radius: 10px;
     box-shadow: 0 40px 90px -20px rgba(0,0,0,0.7);
     display: block;
-  }
-  .play-btn {
     position: absolute;
-    width: 76px;
-    height: 76px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(4px);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.15s ease, opacity 0.3s ease;
+    opacity: 0;
+    transform: scale(0.96);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    pointer-events: none;
   }
-  .play-btn:hover { transform: scale(1.08); }
-  .play-btn:active { transform: scale(0.94); }
-  .play-btn.hidden { opacity: 0; pointer-events: none; }
-  .play-btn svg { width: 28px; height: 28px; margin-left: 4px; }
+  .art.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
 </style>
 </head>
 <body>
   <div class="stage">
-    <img class="art" src="album.jpg" alt="Album art">
-    <button class="play-btn" id="playBtn" aria-label="Play song">
-      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
-    </button>
+    <button class="enter-btn" id="enterBtn">Enter</button>
+    <img class="art" id="art" src="album.jpg" alt="Album art">
   </div>
 
   <audio id="audio" src="song.mp3" preload="auto" loop></audio>
 
   <script>
     const audio = document.getElementById('audio');
-    const playBtn = document.getElementById('playBtn');
+    const enterBtn = document.getElementById('enterBtn');
+    const art = document.getElementById('art');
 
-    playBtn.addEventListener('click', () => {
-      audio.play();
-      playBtn.classList.add('hidden');
-    });
-
-    // If the song ends and looping is off, bring the button back
-    audio.addEventListener('pause', () => {
-      if (!audio.ended) return;
-      playBtn.classList.remove('hidden');
+    enterBtn.addEventListener('click', () => {
+      enterBtn.classList.add('hidden');
+      art.classList.add('visible');
+      audio.play().catch(err => console.error('Playback failed:', err));
     });
   </script>
 </body>
