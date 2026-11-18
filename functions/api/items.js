@@ -1,6 +1,6 @@
 // EDIT THESE TWO LINES: your email and name, her email and name.
 const USERS = {
-  "dogslovegucci@proton.me": "Fabian",
+  "phabianpossi@gmail.com": "Fabian",
   "williams_dianaw@icloud.com": "Ana",
 };
 
