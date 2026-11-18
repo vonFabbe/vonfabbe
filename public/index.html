@@ -3,44 +3,55 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wishlist</title>
+<title>Our wishlist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,100&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f1f2ef;--ink:#1a1e1c;--mute:#78807a;--line:#d9dcd6;--acc:#2f4b6e;--field:#fff}
-@media(prefers-color-scheme:dark){:root{--bg:#121513;--ink:#e8ebe6;--mute:#8a928c;--line:#2a2f2c;--acc:#8fb0d9;--field:#1a1e1b}}
+:root{--bg1:#fff0f5;--bg2:#ece8fb;--card:rgba(255,255,255,.78);--ink:#3b2a3b;--mute:#98839a;--line:#f0d9e5;--acc:#e0608a;--soft:#fbd3e2;--field:#fff;--shadow:0 8px 28px rgba(224,96,138,.12)}
+@media(prefers-color-scheme:dark){:root{--bg1:#1f1523;--bg2:#171322;--card:rgba(42,31,48,.8);--ink:#f7e9f1;--mute:#b99fb4;--line:#42304a;--acc:#f58cb0;--soft:#4b2c40;--field:#241a29;--shadow:0 8px 28px rgba(0,0,0,.3)}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 "Bricolage Grotesque",system-ui,sans-serif}
-main{max-width:1000px;margin:0 auto;padding:56px 24px 96px}
-h1{font-size:clamp(2.4rem,7vw,4.2rem);font-weight:300;letter-spacing:-.03em;line-height:1;margin:0 0 56px}
-.cols{display:grid;gap:56px;grid-template-columns:1fr 1fr}
-@media(max-width:760px){.cols{grid-template-columns:1fr;gap:48px}}
-h2{font-size:1.15rem;font-weight:600;margin:0 0 16px}
-form{display:grid;gap:8px;margin-bottom:24px}
-input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+body{margin:0;min-height:100vh;color:var(--ink);font:400 16px/1.5 Nunito,system-ui,sans-serif;background:linear-gradient(160deg,var(--bg1),var(--bg2)) fixed}
+main{max-width:980px;margin:0 auto;padding:56px 20px 96px}
+header{text-align:center;margin-bottom:48px}
+h1{font:500 clamp(2.2rem,7vw,3.6rem)/1.1 Fraunces,Georgia,serif;font-variation-settings:"SOFT" 100;letter-spacing:-.01em;margin:0}
+h1 span{color:var(--acc);font-style:italic}
+.tag{color:var(--mute);margin:8px 0 0}
+.cols{display:grid;gap:40px;grid-template-columns:1fr 1fr;align-items:start}
+@media(max-width:760px){.cols{grid-template-columns:1fr}}
+h2{font:500 1.5rem Fraunces,Georgia,serif;font-variation-settings:"SOFT" 100;margin:0 0 16px}
+.card{background:var(--card);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+form.card{padding:16px;display:grid;gap:10px;margin-bottom:20px}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--field);border:1.5px solid var(--line);border-radius:14px;padding:10px 14px}
 input:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-summary{cursor:pointer;color:var(--mute);font-size:.9rem;margin:2px 0 8px}
+summary{cursor:pointer;color:var(--mute);font-size:.92rem;margin-bottom:8px}
 .row{display:flex;gap:8px;align-items:center}
-button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:9px 16px;background:var(--acc);color:var(--bg);font-weight:600}
-button.quiet{background:none;color:var(--mute);padding:4px 8px;font-weight:400;font-size:.9rem}
-button.quiet:hover{color:var(--ink)}
-ul{list-style:none;margin:0;padding:0}
-li{padding:16px 0;border-top:1px solid var(--line)}
-li.got .t{text-decoration:line-through;color:var(--mute)}
-.t{font-weight:600}.m{color:var(--mute);font-size:.92rem}
-.t a{color:inherit;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
-.acts{margin:4px 0 0 -8px}
-.empty{color:var(--mute)}
+.go{font:700 1rem Nunito,sans-serif;cursor:pointer;border:0;border-radius:99px;padding:10px 22px;background:var(--acc);color:#fff}
+.go:hover{filter:brightness(1.07)}
+.chip{font:600 .85rem Nunito,sans-serif;cursor:pointer;background:var(--field);color:var(--ink);border:1.5px solid var(--line);border-radius:99px;padding:4px 12px}
+.chip:hover:not(:disabled){background:var(--soft);border-color:var(--acc)}
+.chip:disabled{opacity:.35;cursor:default}
+.chip.q{border-color:transparent;background:none;color:var(--mute)}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+li.item{display:grid;grid-template-columns:34px 1fr;gap:4px 12px;padding:16px;border-radius:20px}
+.n{grid-row:span 3;width:34px;height:34px;border-radius:50%;background:var(--soft);color:var(--acc);font-weight:700;display:grid;place-items:center}
+.t{font-weight:700;overflow-wrap:anywhere}
+.t a{color:inherit;text-decoration-color:var(--acc);text-underline-offset:3px}
+.m{color:var(--mute);font-size:.92rem;overflow-wrap:anywhere}
+.acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+li.got{opacity:.55}li.got .t{text-decoration:line-through}
+.empty{color:var(--mute);text-align:center;padding:24px;border:1.5px dashed var(--line);border-radius:20px}
 </style>
 </head>
 <body>
 <main>
-<h1 id="hi">&nbsp;</h1>
+<header>
+  <h1 id="hi">&nbsp;</h1>
+</header>
 <div class="cols">
   <section>
-    <h2>Your list</h2>
-    <form id="f">
-      <input id="title" placeholder="Add something you'd love" maxlength="200" required>
+    <h2>Your wishes</h2>
+    <form id="f" class="card">
+      <input id="title" placeholder="Add something you'd love…" maxlength="200" required>
       <details><summary>Add details</summary>
         <div style="display:grid;gap:8px">
           <input id="link" type="url" placeholder="Link">
@@ -48,7 +59,7 @@ li.got .t{text-decoration:line-through;color:var(--mute)}
           <textarea id="note" rows="2" placeholder="Size, colour, anything useful" maxlength="1000"></textarea>
         </div>
       </details>
-      <div class="row"><button id="save">Add</button><button type="button" class="quiet" id="cancel" hidden>Cancel</button></div>
+      <div class="row"><button class="go" id="save">Add to my list</button><button type="button" class="chip q" id="cancel" hidden>Cancel</button></div>
     </form>
     <ul id="mine"></ul>
   </section>
@@ -60,40 +71,49 @@ li.got .t{text-decoration:line-through;color:var(--mute)}
 </main>
 <script>
 const $=id=>document.getElementById(id);
-let editId=null,data=null;
+let editId=null,mine=[];
 const api=(m,body,q="")=>fetch("/api/items"+q,{method:m,headers:{"content-type":"application/json"},body:body&&JSON.stringify(body)});
 
-function li(it,own){
-  const el=document.createElement("li"); if(!own&&it.claimed)el.className="got";
-  const t=document.createElement("div"); t.className="t";
+function li(it,i,own){
+  const el=document.createElement("li");el.className="item card"+(!own&&it.claimed?" got":"");
+  const n=document.createElement("div");n.className="n";n.textContent=i+1;
+  const t=document.createElement("div");t.className="t";
   if(it.link){const a=document.createElement("a");a.href=it.link;a.target="_blank";a.rel="noopener";a.textContent=it.title;t.append(a)}else t.textContent=it.title;
-  el.append(t);
+  el.append(n,t);
   const meta=[it.price,it.note].filter(Boolean).join(" · ");
   if(meta){const m=document.createElement("div");m.className="m";m.textContent=meta;el.append(m)}
   const acts=document.createElement("div");acts.className="acts";
-  const b=(txt,fn)=>{const x=document.createElement("button");x.className="quiet";x.textContent=txt;x.onclick=fn;acts.append(x)};
+  const b=(txt,fn,label,off)=>{const x=document.createElement("button");x.className="chip";x.textContent=txt;if(label)x.setAttribute("aria-label",label);x.disabled=!!off;x.onclick=fn;acts.append(x)};
   if(own){
+    b("↑",()=>move(i,-1),"Move up",i===0);
+    b("↓",()=>move(i,1),"Move down",i===mine.length-1);
     b("Edit",()=>{editId=it.id;$("title").value=it.title;$("link").value=it.link;$("price").value=it.price;$("note").value=it.note;
-      document.querySelector("details").open=true;$("save").textContent="Save changes";$("cancel").hidden=false;$("title").focus()});
-    b("Remove",async()=>{if(confirm("Remove this item?")){await api("DELETE",null,"?id="+it.id);load()}});
-  }else b(it.claimed?"Undo got it":"Got it",async()=>{await api("PUT",{id:it.id,claimed:!it.claimed});load()});
+      document.querySelector("details").open=true;$("save").textContent="Save changes";$("cancel").hidden=false;$("title").focus();scrollTo({top:0,behavior:"smooth"})});
+    b("Remove",async()=>{if(confirm("Remove this wish?")){await api("DELETE",null,"?id="+it.id);load()}});
+  }else b(it.claimed?"Undo":"Got it ✓",async()=>{await api("PUT",{id:it.id,claimed:!it.claimed});load()});
   el.append(acts);return el;
 }
 function fill(ul,items,own,empty){
   ul.replaceChildren();
   if(!items.length){const e=document.createElement("li");e.className="empty";e.textContent=empty;ul.append(e)}
-  items.forEach(i=>ul.append(li(i,own)));
+  items.forEach((x,i)=>ul.append(li(x,i,own)));
+}
+async function move(i,d){
+  const j=i+d;if(j<0||j>=mine.length)return;
+  [mine[i],mine[j]]=[mine[j],mine[i]];
+  fill($("mine"),mine,true,"");
+  await api("PUT",{order:mine.map(x=>x.id)});
 }
 async function load(){
   const r=await api("GET");
-  if(!r.ok){$("hi").textContent="No access";return}
-  data=await r.json();
-  $("hi").textContent="Hi "+data.me;
-  $("ptitle").textContent=data.partner+"'s list";
-  fill($("mine"),data.mine,true,"Nothing here yet. Add your first wish above.");
-  fill($("theirs"),data.theirs,false,data.partner+" hasn't added anything yet.");
+  if(!r.ok){$("hi").textContent=r.status===403?"No access: your email isn't in items.js":"Something went wrong (error "+r.status+")";return}
+  const d=await r.json();mine=d.mine;
+  $("hi").innerHTML="";$("hi").append("Hi ");const s=document.createElement("span");s.textContent=d.me;$("hi").append(s," ♡");
+  $("ptitle").textContent=d.partner+"'s wishes";
+  fill($("mine"),mine,true,"Nothing here yet. Add your first wish above ♡");
+  fill($("theirs"),d.theirs,false,d.partner+" hasn't added anything yet.");
 }
-function reset(){editId=null;$("f").reset();$("save").textContent="Add";$("cancel").hidden=true}
+function reset(){editId=null;$("f").reset();$("save").textContent="Add to my list";$("cancel").hidden=true}
 $("cancel").onclick=reset;
 $("f").onsubmit=async e=>{
   e.preventDefault();
