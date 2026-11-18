@@ -5,12 +5,12 @@ const USERS = {
 };
 
 const json = (d, s = 200) =>
-  new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json" } });
+  new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 
 export async function onRequest({ request, env }) {
   const email = (request.headers.get("Cf-Access-Authenticated-User-Email") || "").toLowerCase();
   const me = USERS[email];
-  if (!me) return json({ error: "forbidden" }, 403);
+  if (!me) return json({ error: "forbidden", seen: email }, 403);
   const other = Object.keys(USERS).find((e) => e !== email);
   const db = env.DB;
   const clean = (s, n) => String(s || "").trim().slice(0, n);
