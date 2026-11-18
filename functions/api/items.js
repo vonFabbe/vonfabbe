@@ -17,7 +17,8 @@ export async function onRequest({ request, env }) {
   const link = (s) => (/^https?:\/\//i.test(clean(s, 500)) ? clean(s, 500) : "");
 
   if (request.method === "GET") {
-    const q = (cols, o) => db.prepare(`SELECT ${cols} FROM items WHERE owner=? ORDER BY id DESC`).bind(o).all();
+    const q = (cols, o) =>
+      db.prepare(`SELECT ${cols} FROM items WHERE owner=? ORDER BY position, id`).bind(o).all();
     const mine = (await q("id,title,link,note,price", email)).results;
     const theirs = (await q("id,title,link,note,price,claimed", other)).results;
     return json({ me, partner: USERS[other], mine, theirs });
@@ -28,12 +29,17 @@ export async function onRequest({ request, env }) {
   if (request.method === "POST") {
     const title = clean(b.title, 200);
     if (!title) return json({ error: "title required" }, 400);
-    await db.prepare("INSERT INTO items (owner,title,link,note,price) VALUES (?,?,?,?,?)")
-      .bind(email, title, link(b.link), clean(b.note, 1000), clean(b.price, 50)).run();
+    await db.prepare(
+      "INSERT INTO items (owner,title,link,note,price,position) VALUES (?,?,?,?,?,(SELECT COALESCE(MAX(position),0)+1 FROM items WHERE owner=?))"
+    ).bind(email, title, link(b.link), clean(b.note, 1000), clean(b.price, 50), email).run();
     return json({ ok: true });
   }
+
   if (request.method === "PUT") {
-    if (b.claimed !== undefined) {
+    if (Array.isArray(b.order)) {
+      const stmt = db.prepare("UPDATE items SET position=? WHERE id=? AND owner=?");
+      await db.batch(b.order.slice(0, 500).map((id, i) => stmt.bind(i + 1, id, email)));
+    } else if (b.claimed !== undefined) {
       await db.prepare("UPDATE items SET claimed=? WHERE id=? AND owner=?")
         .bind(b.claimed ? 1 : 0, b.id, other).run();
     } else {
@@ -44,6 +50,7 @@ export async function onRequest({ request, env }) {
     }
     return json({ ok: true });
   }
+
   if (request.method === "DELETE") {
     await db.prepare("DELETE FROM items WHERE id=? AND owner=?")
       .bind(new URL(request.url).searchParams.get("id"), email).run();
