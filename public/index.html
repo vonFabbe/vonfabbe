@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wishlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f2ef;--ink:#1a1e1c;--mute:#78807a;--line:#d9dcd6;--acc:#2f4b6e;--field:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#121513;--ink:#e8ebe6;--mute:#8a928c;--line:#2a2f2c;--acc:#8fb0d9;--field:#1a1e1b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 "Bricolage Grotesque",system-ui,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:56px 24px 96px}
+h1{font-size:clamp(2.4rem,7vw,4.2rem);font-weight:300;letter-spacing:-.03em;line-height:1;margin:0 0 56px}
+.cols{display:grid;gap:56px;grid-template-columns:1fr 1fr}
+@media(max-width:760px){.cols{grid-template-columns:1fr;gap:48px}}
+h2{font-size:1.15rem;font-weight:600;margin:0 0 16px}
+form{display:grid;gap:8px;margin-bottom:24px}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+input:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+summary{cursor:pointer;color:var(--mute);font-size:.9rem;margin:2px 0 8px}
+.row{display:flex;gap:8px;align-items:center}
+button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:9px 16px;background:var(--acc);color:var(--bg);font-weight:600}
+button.quiet{background:none;color:var(--mute);padding:4px 8px;font-weight:400;font-size:.9rem}
+button.quiet:hover{color:var(--ink)}
+ul{list-style:none;margin:0;padding:0}
+li{padding:16px 0;border-top:1px solid var(--line)}
+li.got .t{text-decoration:line-through;color:var(--mute)}
+.t{font-weight:600}.m{color:var(--mute);font-size:.92rem}
+.t a{color:inherit;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.acts{margin:4px 0 0 -8px}
+.empty{color:var(--mute)}
+</style>
+</head>
+<body>
+<main>
+<h1 id="hi">&nbsp;</h1>
+<div class="cols">
+  <section>
+    <h2>Your list</h2>
+    <form id="f">
+      <input id="title" placeholder="Add something you'd love" maxlength="200" required>
+      <details><summary>Add details</summary>
+        <div style="display:grid;gap:8px">
+          <input id="link" type="url" placeholder="Link">
+          <input id="price" placeholder="Price" maxlength="50">
+          <textarea id="note" rows="2" placeholder="Size, colour, anything useful" maxlength="1000"></textarea>
+        </div>
+      </details>
+      <div class="row"><button id="save">Add</button><button type="button" class="quiet" id="cancel" hidden>Cancel</button></div>
+    </form>
+    <ul id="mine"></ul>
+  </section>
+  <section>
+    <h2 id="ptitle"></h2>
+    <ul id="theirs"></ul>
+  </section>
+</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let editId=null,data=null;
+const api=(m,body,q="")=>fetch("/api/items"+q,{method:m,headers:{"content-type":"application/json"},body:body&&JSON.stringify(body)});
+
+function li(it,own){
+  const el=document.createElement("li"); if(!own&&it.claimed)el.className="got";
+  const t=document.createElement("div"); t.className="t";
+  if(it.link){const a=document.createElement("a");a.href=it.link;a.target="_blank";a.rel="noopener";a.textContent=it.title;t.append(a)}else t.textContent=it.title;
+  el.append(t);
+  const meta=[it.price,it.note].filter(Boolean).join(" · ");
+  if(meta){const m=document.createElement("div");m.className="m";m.textContent=meta;el.append(m)}
+  const acts=document.createElement("div");acts.className="acts";
+  const b=(txt,fn)=>{const x=document.createElement("button");x.className="quiet";x.textContent=txt;x.onclick=fn;acts.append(x)};
+  if(own){
+    b("Edit",()=>{editId=it.id;$("title").value=it.title;$("link").value=it.link;$("price").value=it.price;$("note").value=it.note;
+      document.querySelector("details").open=true;$("save").textContent="Save changes";$("cancel").hidden=false;$("title").focus()});
+    b("Remove",async()=>{if(confirm("Remove this item?")){await api("DELETE",null,"?id="+it.id);load()}});
+  }else b(it.claimed?"Undo got it":"Got it",async()=>{await api("PUT",{id:it.id,claimed:!it.claimed});load()});
+  el.append(acts);return el;
+}
+function fill(ul,items,own,empty){
+  ul.replaceChildren();
+  if(!items.length){const e=document.createElement("li");e.className="empty";e.textContent=empty;ul.append(e)}
+  items.forEach(i=>ul.append(li(i,own)));
+}
+async function load(){
+  const r=await api("GET");
+  if(!r.ok){$("hi").textContent="No access";return}
+  data=await r.json();
+  $("hi").textContent="Hi "+data.me;
+  $("ptitle").textContent=data.partner+"'s list";
+  fill($("mine"),data.mine,true,"Nothing here yet. Add your first wish above.");
+  fill($("theirs"),data.theirs,false,data.partner+" hasn't added anything yet.");
+}
+function reset(){editId=null;$("f").reset();$("save").textContent="Add";$("cancel").hidden=true}
+$("cancel").onclick=reset;
+$("f").onsubmit=async e=>{
+  e.preventDefault();
+  const b={title:$("title").value,link:$("link").value,price:$("price").value,note:$("note").value};
+  if(editId)b.id=editId;
+  await api(editId?"PUT":"POST",b);reset();load();
+};
+load();
+</script>
+</body>
+</html>
